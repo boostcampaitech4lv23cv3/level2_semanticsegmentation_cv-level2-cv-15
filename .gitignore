@@ -221,6 +221,10 @@ work_dirs/
 
 # custom
 saved/
+segmentation_models/saved/
+segmentation_models/submission/
+segmentation_models/.ipynb_checkpoints/
+segmentation_models/wandb/
 
 wandb
 wandb-debug.log
