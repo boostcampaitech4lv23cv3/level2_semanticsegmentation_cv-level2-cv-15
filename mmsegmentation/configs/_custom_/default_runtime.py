@@ -9,7 +9,7 @@ log_config = dict(
             init_kwargs={
                 'entity': 'fullhouse',
                 'project': 'Trash Semantic Segmentation',
-                'name': 'DH_swin-b_aug_test'
+                'name': 'DH_swin-b_test'
             }
         )
     ])
