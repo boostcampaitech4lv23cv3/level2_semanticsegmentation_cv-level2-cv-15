@@ -229,3 +229,4 @@ segmentation_models/wandb/
 wandb
 wandb-debug.log
 
+mmsegmentation/wandb/
