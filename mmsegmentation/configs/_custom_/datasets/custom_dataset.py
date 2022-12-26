@@ -21,19 +21,24 @@ albu_transforms = [
         dict(type='Blur', p=1.0),
         dict(type='Sharpen', p=1.0)
     ], p=1.0),
+    dict(type='OneOf',transforms=[
+        dict(type='ShiftScaleRotate', p=1.0)
+    ]),
     dict(type='ColorJitter',
         brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5, p=0.1)
 ]
+
+multi_scale = [(x, x) for x in range(512, 1024+1, 128)]
 
 crop_size = (512, 512)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    dict(type="Resize", img_scale=(512, 512), ratio_range=(0.5, 2.0)),
-    # dict(type='Albu',
-    #     transforms=albu_transforms,
-    #     keymap=dict(img="image", gt_semantic_seg="mask"),
-    #     update_pad_shape=False,),
+    dict(type='Resize', img_scale=multi_scale, multiscale_mode='value', keep_ratio=True),
+    dict(type='Albu',
+        transforms=albu_transforms,
+        keymap=dict(img="image", gt_semantic_seg="mask"),
+        update_pad_shape=False,),
     dict(type='RandomFlip', prob=0.5),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='Normalize', **img_norm_cfg),
@@ -62,16 +67,16 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(512, 512),
+        img_scale=multi_scale,
         # img_ratios=[0.5, 0.75, 1.0, 1.25, 1.5, 1.75],
         flip=False,
         transforms=[
-            dict(type="Resize", keep_ratio=True),
-            dict(type="RandomFlip"),
-            dict(type="Normalize", **img_norm_cfg),
-            dict(type="ImageToTensor", keys=["img"]),
-            dict(type="Collect", keys=["img"]),
-        ],)
+            dict(type='Resize', keep_ratio=True),
+            dict(type='RandomFlip'),
+            dict(type='Normalize', **img_norm_cfg),
+            dict(type='ImageToTensor', keys=['img']),
+            dict(type='Collect', keys=['img']),
+        ])
 ]
 data = dict(
     samples_per_gpu=8,
